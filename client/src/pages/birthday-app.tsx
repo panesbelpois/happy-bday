@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,8 @@ export default function BirthdayApp() {
   const [showHackerPopup, setShowHackerPopup] = useState(false);
   const [backgroundClass, setBackgroundClass] = useState("checkered-bg");
   const [showWishError, setShowWishError] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const { toast } = useToast();
 
   const wishMutation = useMutation({
@@ -109,6 +111,32 @@ export default function BirthdayApp() {
     }
   };
 
+  const startAudio = () => {
+    if (audioRef.current && !isAudioPlaying) {
+      audioRef.current.loop = true;
+      audioRef.current.play().then(() => {
+        setIsAudioPlaying(true);
+      }).catch((error) => {
+        console.log("Audio play failed:", error);
+      });
+    }
+  };
+
+  const stopAudio = () => {
+    if (audioRef.current && isAudioPlaying) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsAudioPlaying(false);
+    }
+  };
+
+  // Stop audio when reaching final page
+  useEffect(() => {
+    if (currentPage === 'final') {
+      stopAudio();
+    }
+  }, [currentPage, isAudioPlaying]);
+
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -119,6 +147,11 @@ export default function BirthdayApp() {
     <div className={`min-h-screen flex items-center justify-center p-4 ${backgroundClass}`}>
       {showConfetti && <Confetti />}
       {showLetterConfetti && <ColorfulConfetti />}
+      
+      <audio ref={audioRef} preload="auto">
+        <source src="/src/assets/hbd.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
       
       <AnimatePresence mode="wait">
         {currentPage === 'quiz' && (
@@ -208,6 +241,7 @@ export default function BirthdayApp() {
             transition={{ duration: 0.5 }}
           >
             <Envelope onOpen={() => {
+              startAudio();
               setCurrentPage('letter');
               setShowLetterConfetti(true);
               setTimeout(() => setShowLetterConfetti(false), 5000);
