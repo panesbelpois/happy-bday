@@ -15,7 +15,7 @@ export default function EmojiQuiz({ onAnswer }: EmojiQuizProps) {
   return (
     <Card className="w-full max-w-lg mx-auto bg-white/90 backdrop-blur-sm border-blue-200">
       <CardContent className="pt-4 px-4 sm:pt-6 sm:px-6 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold text-blue-500 mb-6 sm:mb-8">Klik cikal yg benar 😱⁉️</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold text-blue-500 mb-6 sm:mb-8">you can only choose one 😱⁉️</h2>
         
         <div className="flex justify-center gap-3 sm:gap-6 mb-6 sm:mb-8 px-2">
           {emojis.map((item, index) => (
